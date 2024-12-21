@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "A6_GMC": {
+    "A6": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -62,10 +62,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "A6_GMC:build:production"
+              "buildTarget": "A6:build:production"
             },
             "development": {
-              "buildTarget": "A6_GMC:build:development"
+              "buildTarget": "A6:build:development"
             }
           },
           "defaultConfiguration": "development"
