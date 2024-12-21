@@ -14,16 +14,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have the 'A6_GMC' title`, () => {
+  it(`should have the 'A6' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('A6_GMC');
+    expect(app.title).toEqual('A6');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, A6_GMC');
+    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, Actividad_6');
   });
 });
