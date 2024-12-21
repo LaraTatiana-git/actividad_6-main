@@ -12,7 +12,7 @@ import { Iuser } from './interfaces/iuser.interface';
 })
 
 export class AppComponent implements OnInit {
-  title = 'A6_GMC';
+  title = 'A6';
   uServices = inject(UsersService);
   usersArray: Iuser[] = [];
   singleUser!: Iuser;
@@ -42,13 +42,5 @@ export class AppComponent implements OnInit {
     // } catch (error) {
     //   console.log(error);
     // }
-
-
-
   }
-
-
-
-
-
 }
