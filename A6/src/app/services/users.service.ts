@@ -111,26 +111,3 @@ export class UsersService {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-// getTotalPages(): number {
-//   let total_pages = 4
-//   const firstPage = this.getBasePage().subscribe((data: Ipages) => {
-//     total_pages = Number(data.total_pages);
-//     console.log(total_pages);
-//   });
-
-//   return total_pages;
-// }
-
