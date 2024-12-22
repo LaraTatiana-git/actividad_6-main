@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { firstValueFrom, Observable } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { Ipages } from '../interfaces/ipages.interface';
 import { Iuser } from '../interfaces/iuser.interface';
 
@@ -18,27 +18,27 @@ export class UsersService {
     }
   }
 
-  getDBtotalUsers(): Promise<number> {
-    return this.getDBPage(1).then((page: Ipages) => page.total);
+  async getDBtotalUsers(): Promise<number> {
+    const page = await this.getPage(1);
+    return page.total;
   }
 
-  async getPage(n: number): Promise<Iuser[]> {
-
-    const firstPage = await this.getDBPage(1);
-    const nUsersDBpage = firstPage.per_page;               
+  async getPage(n: number): Promise<Ipages> {
+    const firstPage = await this.getPage(1);
+    const nUsersDBpage = firstPage.per_page;
     console.log('nUsersDBpage: ', nUsersDBpage);
     const nTotalPages = firstPage.total_pages;
     const nTotalUsers = firstPage.total;
-    const nTotalVisualPages = nTotalUsers % this.userPerPageList === 0 ? nTotalUsers / this.userPerPageList : Math.trunc(nTotalUsers / this.userPerPageList) + 1;            
+    const nTotalVisualPages = nTotalUsers % this.userPerPageList === 0 ? nTotalUsers / this.userPerPageList : Math.trunc(nTotalUsers / this.userPerPageList) + 1;
     console.log('nTotalPages: ', nTotalPages);
     // total of users in the database
-    const iniArrL = 1 + (n - 1) * this.userPerPageList;    
+    const iniArrL = 1 + (n - 1) * this.userPerPageList;
     console.log('iniArrL: ', iniArrL);
     const user1L = (iniArrL % nUsersDBpage);
     console.log('user1L: ', user1L);
-    const nPageDB = Math.trunc(iniArrL / nUsersDBpage) + 1; .
+    const nPageDB = Math.trunc(iniArrL / nUsersDBpage) + 1;
     console.log('nPageDB: ', nPageDB);
-    let nPageDB_Array = (await this.getDBPage(nPageDB)).results;
+    let nPageDB_Array = (await this.getPage(nPageDB)).results;
     console.log('nPageDB_Array: ', nPageDB_Array);
     const utilUsers = nPageDB_Array.length - user1L + 1;
     console.log('utilUsers: ', utilUsers);
@@ -46,35 +46,51 @@ export class UsersService {
     console.log('firstIndex: ', firstIndex);
     const lastIndex = firstIndex + this.userPerPageList;
     console.log('lastIndex: ', lastIndex);
-    if (utilUsers >= this.userPerPageList)           
-      console.log('Entering first IF ---- so we have enought users to return');
+    if (utilUsers >= this.userPerPageList) {
+      console.log('Entering first IF ---- so we have enough users to return');
       const ret = nPageDB_Array.slice(firstIndex, lastIndex);
       //console.log('return: ', ret);
-      return ret;
-    } else if (n <= nTotalVisualPages) {      
+      return {
+        page: n,
+        per_page: this.userPerPageList,
+        total: firstPage.total,
+        total_pages: nTotalVisualPages,
+        results: ret
+      };
+    } else if (n <= nTotalVisualPages) {
       console.log('Entering IF ELSE ----- so n<=nTotalVisualPages = true');
-      const nextResults = (await this.getDBPage(nPageDB + 1)).results;
+      const nextResults = (await this.getPage(nPageDB + 1)).results;
       console.log(nextResults);
       const ret = (nPageDB_Array.concat(nextResults)).slice(firstIndex, lastIndex);
       console.log('return: ', ret);
-
-      return ret
- 
+      return {
+        page: n,
+        per_page: this.userPerPageList,
+        total: firstPage.total,
+        total_pages: nTotalVisualPages,
+        results: ret
+      };
     } else {
       console.log('Entering to the end of DB ---- n<=nTotalVisualPages = false');
       console.log('n =', n);
       console.log('nTotalVisualPages =', nTotalVisualPages);
       const ret = nPageDB_Array.slice(firstIndex);
       console.log('return: ', ret);
-      return ret
+      return {
+        page: n,
+        per_page: this.userPerPageList,
+        total: firstPage.total,
+        total_pages: nTotalVisualPages,
+        results: ret
+      };
     }
-
+  }
 
   async getAllUsers(): Promise<Iuser[]> {
     let users: Iuser[] = [];
-    const firstpage = await this.getDBPage(1); // así nos aseguramos de que funciona si el numero de paginas cambia.
+    const firstpage = await this.getPage(1); // así nos aseguramos de que funciona si el numero de paginas cambia.
     for (let i = 1; i <= firstpage.total_pages; i++) {
-      const page = await this.getDBPage(i);
+      const page = await this.getPage(i);
       users = users.concat(page.results);
     }
     return users;
@@ -99,15 +115,14 @@ export class UsersService {
   /**
    * Gets a user by its id.
    */
-  getUserById(id: string): Promise<Iuser> {
+  async getUserById(id: string): Promise<Iuser> {
     return firstValueFrom(this.httpClient.get<Iuser>(this.apiUrl + id));
   }
 
   /**
    * Deletes a user by its id.
    */
-  deleteUserById(id: string): Promise<Iuser> {
+  async deleteUserById(id: string): Promise<Iuser> {
     return firstValueFrom(this.httpClient.delete<Iuser>(this.apiUrl + id));
   }
 }
-
