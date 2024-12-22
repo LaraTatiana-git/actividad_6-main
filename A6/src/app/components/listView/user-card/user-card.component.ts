@@ -1,4 +1,4 @@
-import { Component, inject, Input, Type } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { Iuser } from '../../../interfaces/iuser.interface';
 import { RouterLink } from '@angular/router';
 import Swal from 'sweetalert2';
@@ -14,7 +14,6 @@ import { UsersService } from '../../../services/users.service';
 export class UserCardComponent {
   userService = inject(UsersService);
   @Input('userOnCard') user: Iuser | null = null;
-
 
   isIuser(obj: any): obj is Iuser {
     return 'first_name' in obj && 'last_name' in obj;
@@ -35,7 +34,7 @@ export class UserCardComponent {
       try {
         const resp = await this.userService.deleteUserById(id);
         if (this.isIuser(resp)) {
-          let sar = await Swal.fire({
+          await Swal.fire({
             title: 'Eliminado con exito',
             text: 'Usuario:' + resp.first_name + ' ' + resp.last_name + ' ',
             icon: 'success',
@@ -43,7 +42,7 @@ export class UserCardComponent {
           })
         }
       } catch (error) {
-        let sar = await Swal.fire({
+        await Swal.fire({
           title: 'Ups! Algo no fue bien, contacta el administrador!',
           text: 'error:' + error,
           icon: 'error',
@@ -51,8 +50,5 @@ export class UserCardComponent {
         console.log(error);
       }
     }
-
   }
-
-
 }

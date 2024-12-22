@@ -1,4 +1,5 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { UsersService } from '../../services/users.service';
 import { Iuser } from '../../interfaces/iuser.interface';
 import { UserCardComponent } from './user-card/user-card.component';
@@ -6,14 +7,14 @@ import { UserCardComponent } from './user-card/user-card.component';
 @Component({
   selector: 'app-list-view',
   standalone: true,
-  imports: [UserCardComponent],
+  imports: [CommonModule, UserCardComponent],
   templateUrl: './listView.component.html',
-  styleUrl: './listView.component.css'
+  styleUrls: ['./listView.component.css']
 })
-export class ListViewComponent {
+export class ListViewComponent implements OnInit {
   uServices = inject(UsersService);
   usersArray: Iuser[] = [];
-  usersPerPage: number = 8; // CHANGING THIS VALUE WILL CHANGE THE NUMBER OF USERS VISUALIZED PER PAGE
+  usersPerPage: number = 8;
   actualPage: number = 1;
   DB_total_users = 1;
   listView_total_pages = 1;
@@ -31,30 +32,19 @@ export class ListViewComponent {
     this.loadPage();
   }
 
-  async loadPage() {
-    try {
-      this.usersArray = this.shuffleArray(await this.uServices.getPage(this.actualPage));
-    }
-    catch (error) { console.log(error); }
+  trackByUserId(index: number, user: Iuser): number {
+    return user.id ?? 0;
   }
 
-  shuffleArray(array: any[]): any[] {
-    return array.map(value => ({ value, sort: Math.random() }))
-      .sort((a, b) => a.sort - b.sort)
-      .map(({ value }) => value);
+  previousPage(): void {
+    // Logic for previous page
   }
 
-  nextPage() {
-    if (this.actualPage < this.listView_total_pages) {
-      this.actualPage++;
-      this.loadPage();
-    }
+  nextPage(): void {
+    // Logic for next page
   }
 
-  previousPage() {
-    if (this.actualPage > 1) {
-      this.actualPage--;
-      this.loadPage();
-    }
+  loadPage(): void {
+    // Logic to load the page
   }
 }

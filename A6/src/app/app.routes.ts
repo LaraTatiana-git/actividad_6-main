@@ -9,9 +9,5 @@ export const routes: Routes = [
     { path: 'newuser', component: UserFormComponent },
     { path: 'updateuser/:id', component: UserFormComponent },
     { path: 'userview/:id', component: UserViewComponent },
-    // {  path: 'user/:id', component: UserViewComponent},
     { path: '**', redirectTo: 'home' }
-]
-
-// /newuser: donde ser cargará un formulario que dará de alta un usuario siguiendo el patron del api de creater user.
-// /updateuser/1
+];
